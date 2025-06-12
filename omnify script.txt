@@ -25,7 +25,7 @@ public class HotelBookingTest {
 		driver.get("https://hotels.com");
 	}
 	@Test
-    public void testHotelSearchUsingDiscount() {
+        public void testHotelSearchUsingDiscount() {
         // search for hotels in “New York” for the dates April 10 - April 15
         WebElement location= wait.until(ExpectedConditions.elementToBeClickable(By.id("location")));
         location.clear();
@@ -35,7 +35,7 @@ public class HotelBookingTest {
         wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("css selector of that checkin date"))).click();
         // select checkout date from calendar
         driver.findElement(By.id("checkoutdate")).click();
-        wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("css selector of that checkin date"))).click();
+        wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("css selector of that checkout date"))).click();
         // click on search button
         driver.findElement(By.id("searchButton")).click();
          //select the first hotel from the search results.
@@ -61,3 +61,4 @@ public class HotelBookingTest {
 		driver.quit();
 	}
 }
+(All these findelements method can be move to Pom page and store in @FindBy methods using private methods, reusable methods can be stored in base class and extends it to the main class)
