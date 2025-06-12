@@ -1,0 +1,76 @@
+package com.candorium.qa.testcases;
+
+import java.time.Duration;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Assert;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+
+public class HotelBookingTest {
+	WebDriver driver;
+	WebDriverWait wait;
+
+	@BeforeClass
+	public void setUp() {
+		driver = new ChromeDriver();
+		driver.manage().window().maximize();
+		wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+		// open the hotel
+		driver.get("https://hotels.com");
+	}
+
+	@Test
+    public void testHotelSearchUsingDiscount() {
+        // search for hotels in “New York” for the dates April 10 - April 15
+
+        WebElement location= wait.until(ExpectedConditions.elementToBeClickable(By.id("location")));
+        location.clear();
+        location.sendKeys("New York");
+
+        // select the checkin date from calendar
+        driver.findElement(By.id("checkindate")).click();
+        wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("css selector of that checkin date"))).click();
+
+        // select checkout date from calendar
+        driver.findElement(By.id("checkoutdate")).click();
+        wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("css selector of that checkin date"))).click();
+
+        // click on search button
+        driver.findElement(By.id("searchButton")).click();
+
+         //Sslect the first hotel from the search results.
+        wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("css selector of first hotel"))).click();
+        
+        // Apply the coupon code "SUMMER25".
+        WebElement couponCodeTextbox = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("couponCode")));
+        couponCodeTextbox.sendKeys("SUMMER25");
+        driver.findElement(By.id("apply")).click();
+    
+
+     // Verify that the discount is applied correctly.
+        WebElement discount = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("discountAmount")));
+        String discountAmountText = discount.getText();
+        Assert.assertTrue(discountAmountText.contains("25%"), "Discount not applied");
+        
+     // Proceed to checkout but do not complete payment
+        driver.findElement(By.id("Checkout")).click();
+        
+     // Assert navigation to checkout page
+        String currentUrl = driver.getCurrentUrl();
+        Assert.assertTrue(
+            currentUrl.contains("checkout"),
+            "Navigation to checkout page failed. Actual URL:  " + currentUrl
+        );
+	}
+	@AfterClass
+	public void tearDown() {
+		driver.quit();
+	}
+}
